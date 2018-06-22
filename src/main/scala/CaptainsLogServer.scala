@@ -1,7 +1,7 @@
 import clients.{ClientProvider, LocalClientProvider}
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.sqs.model.Message
-import s3.S3Uploader
+import s3.S3
 import sqs.SQS
 
 import scala.annotation.tailrec
@@ -74,7 +74,7 @@ object CaptainsLogServer {
   }
 
   private def prepareBucket(s3: AmazonS3): Unit = {
-    new S3Uploader(s3).createBucket("captainslog")
+    new S3(s3).createBucket("captainslog")
   }
 
 }

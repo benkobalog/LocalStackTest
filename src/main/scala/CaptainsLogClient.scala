@@ -1,5 +1,5 @@
 import clients.{ClientProvider, LocalClientProvider}
-import s3.S3Downloader
+import s3.S3
 import sqs.SQS
 
 import scala.util.{Failure, Success}
@@ -10,7 +10,7 @@ object CaptainsLogClient {
 
     args match {
       case Array("get", id) =>
-        val s3 = new S3Downloader(awsResources.s3)
+        val s3 = new S3(awsResources.s3)
         s3.download("captainslog", id) match {
           case Success(log) => println(s"Here's log number $id: $log")
           case Failure(_) => println("There's no log with id: " + id)

@@ -1,13 +1,28 @@
 package s3
 
-import java.io.File
+import java.io.{BufferedReader, File, InputStreamReader}
 
 import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model._
+import com.amazonaws.services.s3.model.{
+  CreateBucketRequest,
+  GetBucketLocationRequest,
+  ObjectMetadata,
+  PutObjectRequest
+}
 
 import scala.util.Try
 
-class S3Uploader(s3Client: AmazonS3) {
+class S3(s3Client: AmazonS3) {
+  def download(bucketName: String, key: String) = Try {
+    val objectInputStream =
+      s3Client.getObject(bucketName: String, key: String).getObjectContent
+    val reader = new BufferedReader(new InputStreamReader(objectInputStream))
+    val result =
+      Stream.continually(reader.readLine()).takeWhile(_ != null).mkString("\n")
+    reader.close()
+    objectInputStream.close()
+    result
+  }
 
   def upload(bucketName: String,
              stringObjKeyName: String,
