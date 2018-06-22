@@ -40,7 +40,7 @@ object CaptainsLogServer {
 
     val newId = for {
       queueUrl <- sqs.getOrCreateQueueUrl(queueName, pollWaitTime)
-      messages <- sqs.receive(queueUrl, pollWaitTime)
+      messages <- sqs.receive(queueUrl, None)
       newId <- messagesToS3(s3, lastId, messages)
     } yield newId
 

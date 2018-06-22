@@ -37,11 +37,15 @@ class SQS(sqs: AmazonSQS) {
       sqs.sendMessage(queueUrl, message)
     }
 
-  def receive(queueUrl: String, pollWaitTime: Duration): Try[List[Message]] =
+  def receive(queueUrl: String,
+              pollWaitTime: Option[Duration]): Try[List[Message]] =
     Try {
-      val receiveRequest =
-        new ReceiveMessageRequest(queueUrl)
-          .withWaitTimeSeconds(pollWaitTime.toSeconds.toInt)
+      val receiveRequest = pollWaitTime match {
+        case Some(wt) =>
+          new ReceiveMessageRequest(queueUrl)
+            .withWaitTimeSeconds(wt.toSeconds.toInt)
+        case None => new ReceiveMessageRequest(queueUrl)
+      }
 
       val messages =
         sqs.receiveMessage(receiveRequest).getMessages.asScala.toList
