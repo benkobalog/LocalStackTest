@@ -1,4 +1,5 @@
-import clients.{ClientProvider, LocalClientProvider}
+import CaptainsLogServer.config
+import clients.{AWSClientProvider, ClientProvider, LocalClientProvider}
 import com.typesafe.config.ConfigFactory
 import s3.S3
 import sqs.SQS
@@ -9,10 +10,13 @@ object CaptainsLogClient {
   private val config = ConfigFactory.load()
   private val queueName = config.getString("queue.name")
   private val bucketName = config.getString("bucket.name")
+  private val isLocalStack = config.getBoolean("localstack")
+  private val awsResources: ClientProvider =
+    if (isLocalStack) LocalClientProvider else AWSClientProvider
+
+  println("Starting with config " + awsResources)
 
   def main(args: Array[String]): Unit = {
-    val awsResources: ClientProvider = LocalClientProvider
-
     args match {
       case Array("get", id) =>
         val s3 = new S3(awsResources.s3)

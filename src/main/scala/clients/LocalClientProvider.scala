@@ -4,7 +4,7 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import com.amazonaws.services.sqs.{AmazonSQS, AmazonSQSClientBuilder}
 
-object LocalClientProvider extends ClientProvider {
+case object LocalClientProvider extends ClientProvider {
   private val clientRegion = "us-east-2"
   private val sqsUrl = "http://localhost:4576"
   private val s3Url = "http://localhost:4572"
