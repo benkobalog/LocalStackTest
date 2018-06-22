@@ -8,17 +8,20 @@ import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
+import com.typesafe.config.ConfigFactory
+
 object CaptainsLogServer {
   private val awsResources: ClientProvider = LocalClientProvider
   @volatile private var shutdown = false
+  private val config = ConfigFactory.load()
+  private val queueName = config.getString("queue.name")
+  private val bucketName = config.getString("bucket.name")
 
   def main(args: Array[String]): Unit = {
     val sqsWrapper = new SQS(awsResources.sqs)
     val s3 = awsResources.s3
 
     prepareBucket(s3)
-
-    val queueName = "captains_log"
 
     sys.addShutdownHook {
       shutdown = true
@@ -59,7 +62,7 @@ object CaptainsLogServer {
   def messagesToS3(s3: AmazonS3, id: Int, messages: List[Message]): Try[Int] =
     Try {
       messages.foreach { msg =>
-        s3.putObject("captainslog", id.toString, msg.getBody)
+        s3.putObject(bucketName, id.toString, msg.getBody)
         println(s"""Uploaded message: "${msg.getBody}" with id: $id""")
       }
       id + messages.length
@@ -74,7 +77,7 @@ object CaptainsLogServer {
   }
 
   private def prepareBucket(s3: AmazonS3): Unit = {
-    new S3(s3).createBucket("captainslog")
+    new S3(s3).createBucket(bucketName)
   }
 
 }

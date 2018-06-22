@@ -4,6 +4,7 @@ lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := "2.12.6",
   libraryDependencies ++= Seq(
+    "com.typesafe" % "config" % "1.3.2",
     "junit" % "junit" % "4.12" % Test,
     "com.amazonaws" % "aws-java-sdk" % "1.11.337",
     "com.amazonaws" % "aws-java-sdk-s3" % "1.11.337",
